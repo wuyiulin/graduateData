@@ -1,25 +1,32 @@
 #coding:utf-8
 
-fname1 = r'F:\graduateData\Data.txt'
-fname2 = r'F:\graduateData\trun.txt'
-N = 6
-M = 5
+fname1 = r'C:\Users\FrankyWu\Desktop\畢業專題\true_data.txt'
+#fname2 = r'F:\graduateData\trun.txt'
+row = 90
 Hour = 0
 Minute = 0
 Sec = 0
 data_Sum = 0
 Line_amount = 0
 import linecache 
+import time
+
+#把新的三行資料加進來
+old_f = open( fname1, 'r')
+write_old_line = old_f.readlines()
+new_f = open( fname1, 'w')
+new_f.write(time.strftime('%H\n%M\n%S\n', time.localtime()))
+new_f.writelines(write_old_line)
+new_f.close()
 Line_amount = len(open(fname1,'r').readlines())
 print('這是未處理前的行數:'+str(Line_amount))
 
-
-while Line_amount > (M):
+while Line_amount > (row-1):
     with open(fname1, 'r') as old_file:
         with open(fname1, 'r+') as new_file:
             current_line = 1
          # 定位到需要刪除的行
-            while current_line < (N+1):
+            while current_line < (row+1):
                  old_file.readline()
                  current_line += 1
  
@@ -44,22 +51,22 @@ while Line_amount > (M):
             new_file.truncate()
         new_file.close()
     Line_amount = Line_amount - 1
-    old_file.close()
+    #old_file.close()
 Line_amount = len(open(fname1,'r').readlines())
 print('這是已處理後的行數:'+str(Line_amount))
 with open(fname1, 'r') as old_file:
-    f = open(fname2,'w+')
+    #f = open(fname2,'w+')
     #hour = 0
     #minute = 0
     #sec = 0
     date_List = old_file.readlines()
-    date_List.reverse()
+    #date_List.reverse()
     #print(old_file.readlines())
     print(date_List)
     #str = ';'.join(list)
     Count = 0
     print(date_List[0])
-    while Count < (N) :
+    while Count < (row):
         Hour = Hour + float(date_List[Count])*60*60
         #print('這是小時:'+str(Hour))
         Minute = Minute + float(date_List[Count + 1])*60
