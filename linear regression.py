@@ -1,6 +1,6 @@
 #coding:utf-8
 
-fname1 = r'F:\GitHubData\graduateData\true_data.txt'
+fname1 = r'E:\GithubRepo\graduateData\true_data.txt'
 #fname2 = r'F:\graduateData\trun.txt'
 import numpy as np
 from sklearn import linear_model
@@ -88,15 +88,16 @@ with open(fname1, 'r') as old_file:
     #print(Hour)
     #f.write(str)
     #print(f.readlines())
-    X_axix.reshape( 1, -1)
-    Y_axix.reshape( 1, -1)
-    print([X_axix])
-    print([Y_axix])
+    Coe_X_axix = X_axix.reshape((int(Count/3), 1))
+    Coe_Y_axix = Y_axix.reshape((int(Count/3), 1))
+    #Y_axix.reshape((1,-1)
+    print(list(Coe_X_axix))
+    print(list(Coe_Y_axix))
     regr = linear_model.LinearRegression()
-    regr.fit([X_axix], [Y_axix])
+    regr.fit((Coe_X_axix), list(Coe_Y_axix))
     print('Coefficients: \n', regr.coef_)
-    print(Count)
-    #regr.predict(31)
+    #print(Count)
+    print(regr.predict(Count))
 
     #畫圖區
     plt.figure()
