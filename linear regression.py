@@ -1,16 +1,21 @@
 #coding:utf-8
 
-fname1 = r'C:\Users\FrankyWu\Desktop\畢業專題\true_data.txt'
+fname1 = r'F:\GitHubData\graduateData\true_data.txt'
 #fname2 = r'F:\graduateData\trun.txt'
+import numpy as np
+from sklearn import linear_model
+import linecache 
+import matplotlib.pyplot as plt
+import time
+
 row = 90
 Hour = 0
 Minute = 0
 Sec = 0
-data_Sum = 0
+X_axix = np.zeros((30), dtype=np.float64)
+Y_axix = np.zeros((30), dtype=np.float64)
 Line_amount = 0
-import linecache 
-import time
-
+"""
 #把新的三行資料加進來
 old_f = open( fname1, 'r')
 write_old_line = old_f.readlines()
@@ -20,7 +25,7 @@ new_f.writelines(write_old_line)
 new_f.close()
 Line_amount = len(open(fname1,'r').readlines())
 print('這是未處理前的行數:'+str(Line_amount))
-
+"""
 while Line_amount > (row-1):
     with open(fname1, 'r') as old_file:
         with open(fname1, 'r+') as new_file:
@@ -62,19 +67,46 @@ with open(fname1, 'r') as old_file:
     date_List = old_file.readlines()
     #date_List.reverse()
     #print(old_file.readlines())
-    print(date_List)
+    #print(date_List)
     #str = ';'.join(list)
     Count = 0
+    Count = int(Count)
     print(date_List[0])
     while Count < (row):
-        Hour = Hour + float(date_List[Count])*60*60
+        data_Sum = 0
+        Hour = float(date_List[Count])*60*60
         #print('這是小時:'+str(Hour))
-        Minute = Minute + float(date_List[Count + 1])*60
-        Sec = Sec + float(date_List[Count + 2])
-        data_Sum = float(data_Sum) + Hour + Minute + Sec
-        print('這是時間總和：'+ str(data_Sum))
-        Count = Count + 3
+        Minute = float(date_List[Count + 1])*60
+        Sec = float(date_List[Count + 2])
+        data_Sum = Hour + Minute + Sec
+        X_axix[int(Count/3)] = (int(Count/3))
+        Y_axix[int(Count/3)] = data_Sum
+        print('這是日期座標：'+ str(X_axix[int(Count/3)]))
+        print('這是時間總和：'+ str(Y_axix[int(Count/3)]))
+        #print(Count)
+        Count = int(Count) + 3
     #print(Hour)
-
     #f.write(str)
     #print(f.readlines())
+    X_axix.reshape( 1, -1)
+    Y_axix.reshape( 1, -1)
+    print([X_axix])
+    print([Y_axix])
+    regr = linear_model.LinearRegression()
+    regr.fit([X_axix], [Y_axix])
+    print('Coefficients: \n', regr.coef_)
+    print(Count)
+    #regr.predict(31)
+
+    #畫圖區
+    plt.figure()
+    plt.xlim((0, 30))
+    plt.ylim((0, 86399))
+    T = np.arctan2(Y_axix,X_axix)
+    plt.scatter(X_axix, Y_axix, s=75, c=T, alpha=.5)
+    plt.xticks(())
+    plt.yticks(())
+    plt.xlabel('nearly 30day')
+    plt.ylabel('Total Sec')
+    plt.plot(X_axix, Y_axix)
+    plt.show()
