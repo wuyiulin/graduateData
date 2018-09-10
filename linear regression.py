@@ -1,6 +1,6 @@
 #coding:utf-8
 
-fname1 = r'F:\GitHubData\graduateData\true_data.txt'
+fname1 = r'E:\GithubRepo\graduateData\true_data.txt'
 #fname2 = r'F:\graduateData\trun.txt'
 import numpy as np
 from sklearn import linear_model
