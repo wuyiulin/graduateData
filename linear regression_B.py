@@ -7,13 +7,15 @@ from sklearn import linear_model
 import linecache 
 import matplotlib.pyplot as plt
 import time
+from sklearn.preprocessing import PolynomialFeatures
 
-row = 90
+row = 270
+#row3 = row/3
 Hour = 0
 Minute = 0
 Sec = 0
-X_axix = np.zeros((30), dtype=np.float64)
-Y_axix = np.zeros((30), dtype=np.float64)
+X_axix = np.zeros((90), dtype=np.float64)
+Y_axix = np.zeros((90), dtype=np.float64)
 Line_amount = 0
 """
 #把新的三行資料加進來
@@ -26,39 +28,34 @@ new_f.close()
 Line_amount = len(open(fname1,'r').readlines())
 print('這是未處理前的行數:'+str(Line_amount))
 """
+
+
+
+#多餘文件處理區
 while Line_amount > (row-1):
     with open(fname1, 'r') as old_file:
         with open(fname1, 'r+') as new_file:
             current_line = 1
-         # 定位到需要刪除的行
             while current_line < (row+1):
                  old_file.readline()
                  current_line += 1
- 
-         # 當前光標在被刪除行的行首，記錄該位置
             seek_point = old_file.tell()
- 
-         # 設置光標位置
             new_file.seek(seek_point, 0)
- 
-         # 讀需要刪除的行，光標移到下一行行首
             old_file.readline()
-         
-         # 被刪除行的下一行讀給 next_line
             next_line = old_file.readline()
- 
-         # 連續覆蓋剩餘行，後面所有行上移一行
             while next_line:
                 new_file.write(next_line)
                 next_line = old_file.readline()
- 
-         # 寫完最後一行後截斷文檔，因為刪除操作，文檔整體少了一行，原文檔最後一行需要去掉
             new_file.truncate()
         new_file.close()
     Line_amount = Line_amount - 1
     #old_file.close()
 Line_amount = len(open(fname1,'r').readlines())
 print('這是已處理後的行數:'+str(Line_amount))
+
+
+
+#開檔計算數據並預測
 with open(fname1, 'r') as old_file:
     #f = open(fname2,'w+')
     #hour = 0
@@ -90,25 +87,56 @@ with open(fname1, 'r') as old_file:
     #print(f.readlines())
     Coe_X_axix = X_axix.reshape((int(Count/3), 1))
     Coe_Y_axix = Y_axix.reshape((int(Count/3), 1))
+
+    minX = min(X_axix)
+    maxX = max(X_axix)
+    '''
+    X = np.arange(minX,maxX).reshape((int(Count/3), 1))
+    print('這是X: '+str(X))
+    '''
     #Y_axix.reshape((1,-1)
     print(list(Coe_X_axix))
     print(list(Coe_Y_axix))
-    regr = linear_model.LinearRegression()
+
+
+
+    #選取分析方法
+    #regr = linear_model.LinearRegression()
+    regr = linear_model.LogisticRegression()
+    '''
+    poly_reg = PolynomialFeatures(degree = 2)
+    X_poly = poly_reg.fit_transform(X_axix)
+    '''
     regr.fit((Coe_X_axix), list(Coe_Y_axix))
+    #regr.fit((X_poly), (Y_axix))
+
+
     print('Coefficients: \n', regr.coef_)
     #print(Count)
-    print(regr.predict(Count))
     Y_axix_pred = regr.predict(Coe_X_axix)
+    R_squared = regr.score((Coe_X_axix), list(Coe_Y_axix))
     print(Y_axix_pred)
+    H = int(regr.predict(Count)/3600)
+    M = int((regr.predict(Count)/60)%60)
+    S = int(regr.predict(Count)%60)
+    print('預估明天回家時間: '+str(H)+':'+str(M)+':'+str(S))
+    print('R_squared: '+str(R_squared))
+
+
+
     #畫圖區
     plt.figure()
-    plt.xlim((0, 30))
+    plt.xlim((0, 90))
     plt.ylim((0, 86399))
     T = np.arctan2(Y_axix,X_axix)
     plt.scatter(X_axix, Y_axix, s=100, c=T, alpha=.5)
-    plt.xlabel('nearly 30day')
+    plt.xlabel('nearly 90day')
     plt.ylabel('Total Sec')
     plt.plot(X_axix, Y_axix_pred, 'blue', 20)
-    plt.xticks(())
-    plt.yticks(())
+    #plt.plot(X, regr.predict(poly_reg.fit_transform(X)), 'blue', 20)
+    x_trick = np.arange(0, 90, 5)
+    y_trick = np.arange(0, 86300, 10000)
+    plt.xticks(x_trick)
+    plt.yticks(y_trick)
     plt.show()
+    
