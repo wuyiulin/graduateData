@@ -4,7 +4,7 @@ fname1 = r'F:\GitHubData\graduateData\true_data.txt'
 #fname2 = r'F:\graduateData\trun.txt'
 import numpy as np
 from sklearn import linear_model
-import linecache 
+import linecache
 import matplotlib.pyplot as plt
 import time
 from sklearn.preprocessing import PolynomialFeatures
