@@ -93,12 +93,13 @@ with open(fname1, 'r') as old_file:
     #Y_axix.reshape((1,-1)
     print(list(Coe_X_axix))
     print(list(Coe_Y_axix))
-    regr = linear_model.LinearRegression()
+    regr = linear_model.LogisticRegression()
     regr.fit((Coe_X_axix), list(Coe_Y_axix))
-    print('Coefficients: \n', regr.coef_)
+    r_squared = regr.score((Coe_X_axix), list(Coe_Y_axix))
+    print('Coefficients: ', regr.coef_)
     #print(Count)
-    print(regr.predict(Count))
-
+    print('估計值: '+ str(regr.predict(Count)))
+    print('R-squared: '+ str(r_squared))
     #畫圖區
     plt.figure()
     plt.xlim((0, 30))
